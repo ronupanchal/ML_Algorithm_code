@@ -1,0 +1,85 @@
+const express = require("express")
+const cors = require("cors")
+const mongoose = require('mongoose')
+const app = express();
+app.use(cors());
+
+const FacultyModel = require("./models/faculty")
+const UserModel = require("./models/user")
+
+app.use(express.json())
+mongoose.connect("mongodb://127.0.0.1:27017/db_student",{
+    useNewUrlParser: true,
+});
+//get api
+app.get('/', async(req,res)=>{    
+   
+    try{     
+        let q = await FacultyModel.find({});
+        return res.json(q);
+       }catch(err){
+         console.log(err);
+    }
+});
+
+//get api
+app.get('/users', async(req,res)=>{    
+   
+    try{     
+        let q = await UserModel.find({});
+        return res.json(q);
+       }catch(err){
+         console.log(err);
+    }
+});
+
+//post api
+app.post('/add_user', async(req,res)=>{
+    //const user = new  UserModel({name: "Rama",email:"rama@gmail.com",password:"rama123"});
+    
+    const user = new  UserModel(res);
+    try{        
+        let rec = await user.save();
+        return res.send(rec)
+       }catch(err){
+         console.log(err);
+    }
+});
+app.post('/add_faculty', async(req,res)=>{
+    const faculty = new  FacultyModel({facultyName: "Ram",facultySalary:14200});
+    try{        
+        let rec = await faculty.save();
+        return res.send(rec)
+       }catch(err){
+         console.log(err);
+    }
+});
+
+//update api
+app.put('/update_faculty', async(req,res)=>{    
+    
+    try{        
+        let q = await FacultyModel.updateOne( { _id: "63143816707eeff73c8b040b" },{
+                                            $set: {
+                                            facultyName: "Prashant"
+                                            } });    
+        
+        return res.send(q);
+       }catch(err){
+         console.log(err);
+    }
+});
+//delete api
+app.delete('/delete_faculty', async(req,res)=>{    
+    try{        
+        let q = await FacultyModel.deleteOne( { _id: "63143816707eeff73c8b040b" });    
+        
+        return res.send(q);
+       }catch(err){
+         console.log(err);
+    }
+});
+
+app.listen(3001, () =>{
+    console.log("server running on port 3001...")
+});
